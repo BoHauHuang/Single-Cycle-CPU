@@ -38,6 +38,7 @@ wire [4-1:0]alu_ctrl_out;
 wire [32-1:0]shift_left_out;
 wire [32-1:0]mux_pc_source;
 wire [3-1:0]func_op_i;
+wire [28-1:0]jump_shift_o;
 //Greate componentes
 ProgramCounter PC(
         .clk_i(clk_i),      
@@ -51,9 +52,13 @@ Adder Adder1(
 	    .src2_i(pc_out),     
 	    .sum_o(adder1_sum)    
 	    );
-	
+			
+Shift_Left_Two #(.size(26))  Jump_Shifter(
+        .data_i(im_out[25:0]),
+        .data_o(jump_shift_o)
+        );         
 Instr_Memory IM(
-        .pc_addr_i(pc_out),  
+        .addr_i(pc_out),  
 	    .instr_o(im_out)    
 	    );
 
@@ -76,7 +81,7 @@ Reg_File RF(
         .RTdata_o(RTdata_out)   
         );
 	
-Decoder Decoder(
+Control Control(
         .instr_op_i(im_out[31:26]), 
 	    .RegWrite_o(reg_write), 
 	    .ALU_op_o(alu_op),   
@@ -118,7 +123,7 @@ Adder Adder2(
 	    .sum_o(adder2_sum)      
 	    );
 		
-Shift_Left_Two_32 Shifter(
+Shift_Left_Two #(.size(32))  Shifter(
         .data_i(sign_ext_out),
         .data_o(shift_left_out)
         ); 		
