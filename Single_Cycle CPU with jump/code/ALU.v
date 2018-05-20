@@ -59,6 +59,7 @@ always @(ctrl_i,src1_i,src2_i)begin
 	else if(ctrl_i == 8)result_o[31:0]<= src1_i[31:0] + src2_i[31:0];       //addi 
 	else if(ctrl_i == 9)result_o<= (src1_i | src2_i);                       //ORI
 	else if(ctrl_i == 10)result_o<= (src1_i == src2_i)? 1'b0:1'b1;          //bne
+	else if(ctrl_i == 12)result_o<= src1_i*src2_i;                          //mul
 	else if(ctrl_i == 13)begin                                              //sra
 	     if(src2_i[31] == 1)begin
 	       ones = ones << (32-shamt);
