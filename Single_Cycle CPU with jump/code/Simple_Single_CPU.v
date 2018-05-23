@@ -162,7 +162,8 @@ MUX_2to1 #(.size(32)) Mux_PC_Source(
                 
 Data_Memory Data_Memory(
         .clk_i(clk_i), 
-        .addr_i(im_out[25:21] + sign_ext_out),
+        //.addr_i(im_out[25:21] + sign_ext_out),
+        .addr_i(alu_result),
         .data_i(RTdata_out),
         .MemRead_i(MemRead),
         .MemWrite_i(MemWrite),
