@@ -21,7 +21,7 @@ module ALU(
 //I/O ports
 input  [32-1:0]  src1_i;
 input  [32-1:0]	 src2_i;
-input  [4-1: 0]  ctrl_i;
+input  [5-1: 0]  ctrl_i;
 input  [5-1: 0]   shamt;   
 
 output [32-1:0]	 result_o;
@@ -58,7 +58,8 @@ always @(ctrl_i,src1_i,src2_i)begin
 	else if(ctrl_i == 7)result_o<= (src1_i < src2_i)? 1'b1:1'b0;            //slt
 	else if(ctrl_i == 8)result_o[31:0]<= src1_i[31:0] + src2_i[31:0];       //addi 
 	else if(ctrl_i == 9)result_o<= (src1_i | src2_i);                       //ORI
-	else if(ctrl_i == 10)result_o<= (src1_i == src2_i)? 1'b0:1'b1;          //bne
+	else if(ctrl_i == 10)result_o <= (src1_i == src2_i)? 1'b0:1'b1;          //bne
+	else if(ctrl_i == 11)result_o <= (src1_i < src2_i)? 1'b1:1'b0;           //bltz
 	else if(ctrl_i == 12)result_o<= src1_i*src2_i;                          //mul
 	else if(ctrl_i == 13)begin                                              //sra
 	     if(src2_i[31] == 1)begin
@@ -68,12 +69,10 @@ always @(ctrl_i,src1_i,src2_i)begin
 	     end
 	     else result_o<=src2_i>>shamt;
     end
-	else if(ctrl_i == 14)result_o<= src2_i<<16;                             //LUI  
-	//else if(ctrl_i == 15)result_o<= src2_i<<16;                             //LW
-	//else if(ctrl_i == 11)result_o<= src2_i<<16;                             //SW  
+	else if(ctrl_i == 14)result_o <= src2_i<<16;                             //LUI  
+	else if(ctrl_i == 15)result_o <= (src1_i <= src2_i)? 1'b1:1'b0;          //ble
 	else result_o<= 0;
-	//default: result_o<=0;
- // endcase
+	
 end
 
 

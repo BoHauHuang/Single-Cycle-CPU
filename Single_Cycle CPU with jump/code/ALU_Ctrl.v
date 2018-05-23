@@ -19,10 +19,10 @@ module ALU_Ctrl(
 input      [6-1:0] funct_i;
 input      [4-1:0] ALUOp_i;
 
-output     [4-1:0] ALUCtrl_o;    
+output     [5-1:0] ALUCtrl_o;    
      
 //Internal Signals
-wire        [4-1:0] ALUCtrl_o;
+wire        [5-1:0] ALUCtrl_o;
 
 //Parameter
 
@@ -36,22 +36,22 @@ wire        [4-1:0] ALUCtrl_o;
 // 0110 => ori
 // 0001 => bne
 
-assign ALUCtrl_o = (ALUOp_i == 4'b0010 && funct_i == 6'b100001)? 4'b0010: //addu 2
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b100011)? 4'b0110: //subu 6 
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b100101)? 4'b0001: //or     1
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b100100)? 4'b0000: //and  0
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b101010)? 4'b0111: //slt    7
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b000011)? 4'b1101: //sra  13
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b000111)? 4'b0011: //srav 3
-                   (ALUOp_i == 4'b0010 && funct_i == 6'b011000)? 4'b1100: // mul 12
-                   (ALUOp_i == 4'b0101)? 4'b1110: //LUI                                                14
-                   (ALUOp_i == 4'b0100)? 4'b1000:  //addi                                               8
-                   (ALUOp_i == 4'b0011)? 4'b0100:  //beq                                                4
-                   (ALUOp_i == 4'b0001)? 4'b1010:  //bne                                              10
-                   (ALUOp_i == 4'b0111)? 4'b0101:  //sltiu                                               5
-                  // (ALUOp_i == 4'b1000)? 4'b1111:  //LW                                              15
-                   //(ALUOp_i == 4'b1001)? 4'b1011:  //SW                                               11
-                   (ALUOp_i == 4'b0110)? 4'b1001 : 4'b0000;//ORI                              9
+assign ALUCtrl_o = (ALUOp_i == 4'b0010 && funct_i == 6'b100001)? 5'b00010: //addu 2
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b100011)? 5'b00110: //subu 6 
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b100101)? 5'b00001: //or     1
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b100100)? 5'b00000: //and  0
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b101010)? 5'b00111: //slt    7
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b000011)? 5'b01101: //sra  13
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b000111)? 5'b00011: //srav 3
+                   (ALUOp_i == 4'b0010 && funct_i == 6'b011000)? 5'b01100: // mul 12
+                   (ALUOp_i == 4'b0101)? 5'b01110: //LUI                                                14
+                   (ALUOp_i == 4'b0100)? 5'b01000:  //addi                                               8
+                   (ALUOp_i == 4'b0011)? 5'b00100:  //beq                                                4
+                   (ALUOp_i == 4'b0001)? 5'b01010:  //bne                                              10
+                   (ALUOp_i == 4'b1000)? 5'b01011:  //bltz                                               11
+                   (ALUOp_i == 4'b1001)? 5'b01111:  //ble                                                15
+                   (ALUOp_i == 4'b0111)? 5'b00101:  //sltiu                                               5
+                   (ALUOp_i == 4'b0110)? 5'b01001 : 4'b0000;//ORI                              9
 endmodule     
 
 

@@ -20,6 +20,6 @@ output [size-1:0] data_o;
 wire [size-1:0] data_o;
 
 assign data_o[size-1:2] = data_i[size-3:0] ;
-assign data_o[ 1:0] = 2'b0 ;
+assign data_o[1:0] = 2'b00;
 
 endmodule
