@@ -40,7 +40,7 @@ wire [32-1:0]mux_pc_source;
 wire [32-1:0]mux_pc_source_o1;
 wire [3-1:0]func_op_i;
 wire [28-1:0]jump_shift_o;
-wire [2-1:0]MemToReg;
+wire MemToReg;
 wire BranchType;
 wire Jump;
 wire MemRead;
@@ -66,7 +66,7 @@ Adder Adder1(
 			
 Shift_Left_Two #(.size(26))  Jump_Shifter(
         .data_i(im_out[25:0]),
-        .data_o(jump_shift_o)
+        .data_o(jump_shift_o[27:2])
         );         
 Instr_Memory IM(
         .addr_i(pc_out),  
@@ -152,25 +152,27 @@ MUX_2to1 #(.size(32)) Mux_PC_Source_1(
         );	
         
 MUX_2to1 #(.size(32)) Mux_PC_Source(
-                .data0_i(jump_addr_o),
+                .data0_i(adder1_sum + 32'd8),
+                //.data0_i(jump_addr_o),
                 .data1_i(mux_pc_source_o1),
                 .select_i(Jump),
                 .data_o(mux_pc_source)
                 );    
                 
                 
-Data_Memory DM(
+Data_Memory Data_Memory(
         .clk_i(clk_i), 
-        .addr_i(alu_result),
+        .addr_i(im_out[25:21] + sign_ext_out),
         .data_i(RTdata_out),
         .MemRead_i(MemRead),
         .MemWrite_i(MemWrite),
         .data_o(Data_Memory_out)
         );
- MUX_3to1 #(.size(32)) Mux_DM(
+        //Change here
+ MUX_2to1 #(.size(32)) Mux_DM(
         .data0_i(alu_result),
         .data1_i(Data_Memory_out),
-        .data2_i(sign_ext_out),
+        //.data2_i(sign_ext_out),
         .select_i(MemToReg),
         .data_o(mux_3to1_o)
         );   

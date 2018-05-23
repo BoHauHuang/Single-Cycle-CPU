@@ -69,6 +69,8 @@ always @(ctrl_i,src1_i,src2_i)begin
 	     else result_o<=src2_i>>shamt;
     end
 	else if(ctrl_i == 14)result_o<= src2_i<<16;                             //LUI  
+	//else if(ctrl_i == 15)result_o<= src2_i<<16;                             //LW
+	//else if(ctrl_i == 11)result_o<= src2_i<<16;                             //SW  
 	else result_o<= 0;
 	//default: result_o<=0;
  // endcase

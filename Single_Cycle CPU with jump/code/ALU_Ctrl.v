@@ -49,6 +49,8 @@ assign ALUCtrl_o = (ALUOp_i == 4'b0010 && funct_i == 6'b100001)? 4'b0010: //addu
                    (ALUOp_i == 4'b0011)? 4'b0100:  //beq                                                4
                    (ALUOp_i == 4'b0001)? 4'b1010:  //bne                                              10
                    (ALUOp_i == 4'b0111)? 4'b0101:  //sltiu                                               5
+                  // (ALUOp_i == 4'b1000)? 4'b1111:  //LW                                              15
+                   //(ALUOp_i == 4'b1001)? 4'b1011:  //SW                                               11
                    (ALUOp_i == 4'b0110)? 4'b1001 : 4'b0000;//ORI                              9
 endmodule     
 
