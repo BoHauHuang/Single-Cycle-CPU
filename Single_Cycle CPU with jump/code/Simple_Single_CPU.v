@@ -83,6 +83,7 @@ Reg_File RF(
         .clk_i(clk_i),      
 	    .rst_i(rst_i) ,    
 	    .return_addr(adder1_sum),
+	    .im_outt(im_out[31:26]),
         .RSaddr_i(im_out[25:21]) ,  
         .RTaddr_i(im_out[20:16]) ,  
         .RDaddr_i(mux_write_reg_out) ,  
@@ -148,7 +149,7 @@ Shift_Left_Two #(.size(32))  Shifter(
 MUX_2to1 #(.size(32)) Mux_PC_Source_1(
         .data0_i(adder1_sum),
         .data1_i(adder2_sum),
-        .select_i(branch&mux_branch_o),
+        .select_i(branch&alu_zero),
         .data_o(mux_pc_source_o1)
         );	
         
@@ -162,12 +163,12 @@ MUX_3to1 #(.size(32)) Mux_PC_Source(
                 );    
 
 		
-MUX_2to1 #(.size(32)) Mux_Branch(
-        .data0_i(alu_zero),
-        .data1_i(alu_result),
-        .select_i(BranchType),
-        .data_o(mux_branch_o)
-        );	
+//MUX_2to1 #(.size(32)) Mux_Branch(
+  //      .data0_i(alu_zero),
+    //    .data1_i(alu_result),
+      //  .select_i(BranchType),
+        //.data_o(mux_branch_o)
+       // );	
                 
 Data_Memory Data_Memory(
         .clk_i(clk_i), 
@@ -180,12 +181,12 @@ Data_Memory Data_Memory(
         );
         //Change here
  MUX_3to1 #(.size(32)) Mux_DM(
-        .data0_i(alu_result),
-        .data1_i(Data_Memory_out),
-        .data2_i(sign_ext_out),
-        .select_i(MemToReg),
-        .data_o(mux_3to1_o)
-        );   
+                .data0_i(alu_result),
+                .data1_i(Data_Memory_out),
+                .data2_i(sign_ext_out),
+                .select_i(MemToReg),
+                .data_o(mux_3to1_o)
+                );   
         
 endmodule
 		  

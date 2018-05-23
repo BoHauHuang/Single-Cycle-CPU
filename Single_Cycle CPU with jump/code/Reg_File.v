@@ -8,6 +8,7 @@ module Reg_File(
     RDdata_i,
     RegWrite_i,
     RSdata_o,
+     im_outt,
     RTdata_o
     );
           
@@ -20,6 +21,7 @@ input  [5-1:0]  RSaddr_i;
 input  [5-1:0]  RTaddr_i;
 input  [5-1:0]  RDaddr_i;
 input  [32-1:0] RDdata_i;
+input  [6-1:0]  im_outt;
 
 output [32-1:0] RSdata_o;
 output [32-1:0] RTdata_o;   
@@ -31,7 +33,7 @@ wire        [32-1:0] RTdata_o;
 wire        [32-1:0] return_addr;
 
 parameter return = 5'b11111;
-
+//assign RegDst_o = (instr_op_i == 6'b000000)? 1'b1:1'b0;
 //Read the data
 assign RSdata_o = Reg_File[RSaddr_i] ;
 assign RTdata_o = Reg_File[RTaddr_i] ;
@@ -45,10 +47,12 @@ always @( posedge rst_i or posedge clk_i  ) begin
         Reg_File[16] <= 0; Reg_File[17] <= 0; Reg_File[18] <= 0; Reg_File[19] <= 0;      
         Reg_File[20] <= 0; Reg_File[21] <= 0; Reg_File[22] <= 0; Reg_File[23] <= 0;
         Reg_File[24] <= 0; Reg_File[25] <= 0; Reg_File[26] <= 0; Reg_File[27] <= 0;
-        Reg_File[28] <= 0; Reg_File[29] <= 0; Reg_File[30] <= 0; Reg_File[31] <= 0;
+        Reg_File[28] <= 0; Reg_File[29] <= 128; Reg_File[30] <= 0; Reg_File[31] <= 0;
 	end
     else begin
-    Reg_File[return] <= return_addr;
+        if(im_outt == 6'b000011 )begin
+            Reg_File[return] <= return_addr;
+        end
         if(RegWrite_i) 
             Reg_File[RDaddr_i] <= RDdata_i;	
 		else 

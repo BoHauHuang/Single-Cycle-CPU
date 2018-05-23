@@ -41,9 +41,9 @@ wire            Branch_o;
 wire            BranchType_o;
 
 //Parameter
-assign MemToReg_o = (instr_op_i == 6'b100011)? 2'b01:2'b00;
+assign MemToReg_o = (instr_op_i == 6'b100011)? 2'b01:(instr_op_i == 6'b001111)? 2'b10:2'b00;
 assign RegDst_o = (instr_op_i == 6'b000000)? 1'b1:1'b0;
-assign RegWrite_o = ((instr_op_i == 6'b001000)||(instr_op_i == 6'b000000 && instr_func_i != 6'b001000)||(instr_op_i == 6'b100011))? 1'b1:1'b0;
+assign RegWrite_o = ((instr_op_i == 6'b001000)||(instr_op_i == 6'b000000 && instr_func_i != 6'b001000)||(instr_op_i == 6'b100011)||(instr_op_i == 6'b000011)||(instr_op_i == 6'b001111))? 1'b1:1'b0;
 //assign RegWrite_o = ((instr_op_i != 6'b000100&&instr_op_i != 6'b000101) || instr_op_i == 6'b100011)? 1'b1:1'b0;
 assign Branch_o = (instr_op_i == 6'b000100 || instr_op_i == 6'b000101)? 1'b1:1'b0;
 assign ALUSrc_o = (instr_op_i == 6'b001011||instr_op_i == 6'b001000||instr_op_i == 6'b001111||instr_op_i == 6'b001101||instr_op_i == 6'b100011||instr_op_i == 6'b101011)? 1'b1:1'b0;

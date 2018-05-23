@@ -47,7 +47,7 @@ assign ALUCtrl_o = (ALUOp_i == 4'b0010 && funct_i == 6'b100001)? 5'b00010: //add
                    (ALUOp_i == 4'b0101)? 5'b01110: //LUI                                                14
                    (ALUOp_i == 4'b0100)? 5'b01000:  //addi                                               8
                    (ALUOp_i == 4'b0011)? 5'b00100:  //beq                                                4
-                   (ALUOp_i == 4'b0001)? 5'b01010:  //bne                                              10
+                   (ALUOp_i == 4'b0001)? 5'b01010:  //bne  bnez                                            10
                    (ALUOp_i == 4'b1000)? 5'b01011:  //bltz                                               11
                    (ALUOp_i == 4'b1001)? 5'b01111:  //ble                                                15
                    (ALUOp_i == 4'b0111)? 5'b00101:  //sltiu                                               5
