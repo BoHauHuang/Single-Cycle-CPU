@@ -1,0 +1,6 @@
+direct_mapped_cache_LRU: direct_mapped_cache_LRU 
+direct_mapped_cache_LRU: direct_mapped_cache_LRU.o
+	g++ direct_mapped_cache_LRU.o -o direct_mapped_cache_LRU 
+direct_mapped_cache_LRU.o: direct_mapped_cache_LRU.cpp
+clean:
+	rm -rf *o direct_mapped_cache_LRU 

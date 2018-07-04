@@ -1,0 +1,185 @@
+//0511097 ¶À¬f»¨¡B0516329 ¶À¬R¹ü
+module CPU(
+        clk_i,
+		start_i
+		);
+		
+//I/O port
+input         clk_i;
+input         start_i;
+
+//Internal Signles
+wire [32-1:0]pc_out;
+wire [32-1:0]adder1_sum;
+wire [32-1:0]adder2_sum;
+wire [32-1:0]im_out;
+wire [4-1:0]alu_op;
+wire alu_src;
+wire branch;
+wire reg_write;
+wire reg_dst;
+wire alu_zero;
+wire [5-1:0]mux_write_reg_out;
+wire [32-1:0]alu_result;
+wire [32-1:0]RSdata_out;
+wire [32-1:0]RTdata_out;
+wire [32-1:0]sign_ext_out;
+wire [32-1:0]mux_alusrc_out;
+wire [5-1:0]alu_ctrl_out;
+wire [32-1:0]shift_left_out;
+wire [32-1:0]mux_pc_source;
+wire [32-1:0]mux_pc_source_o1;
+wire [3-1:0]func_op_i;
+wire [2-1:0]MemToReg;
+wire BranchType;
+wire [2-1:0]Jump;
+wire MemRead;
+wire MemWrite;
+wire [32-1:0]Data_Memory_out;
+wire [32-1:0]mux_3to1_o;
+wire [32-1:0]jump_addr_o;
+wire [32-1:0]mux_branch_o;
+
+assign jump_addr_o[1:0] = 2'b00;
+assign jump_addr_o[28-1:2] = im_out[26-1:0];
+assign jump_addr_o[32-1:28] = adder1_sum[32-1:28];
+
+//Greate componentes
+ProgramCounter PC(
+        .clk_i(clk_i),      
+	    .rst_i (start_i),     
+	    .pc_in_i(mux_pc_source) ,   //32 bits
+	    .pc_out_o(pc_out)    // 32 bits
+	    );
+	
+Adder Adder1(
+        .src1_i(32'd4),     
+	    .src2_i(pc_out),     
+	    .sum_o(adder1_sum)    
+	    );
+	             
+Instr_Memory IM(
+        .addr_i(pc_out),  
+	    .instr_o(im_out)    
+	    );
+
+MUX_2to1 #(.size(5)) Mux_Write_Reg(
+        .data0_i(im_out[20:16]),
+        .data1_i(im_out[15:11]),
+        .select_i(reg_dst),
+        .data_o(mux_write_reg_out)
+        );	
+		
+Reg_File RF(
+        .clk_i(clk_i),      
+	    .rst_i(start_i) ,    
+	    .return_addr(adder1_sum),
+	    .im_outt(im_out[31:26]),
+        .RSaddr_i(im_out[25:21]) ,  
+        .RTaddr_i(im_out[20:16]) ,  
+        .RDaddr_i(mux_write_reg_out) ,  
+        .RDdata_i(mux_3to1_o)  , 
+        .RegWrite_i (reg_write),
+        .RSdata_o(RSdata_out) ,  
+        .RTdata_o(RTdata_out)   
+        );
+	
+Control Control(
+        .instr_op_i(im_out[31:26]), 
+        .instr_func_i(im_out[6-1:0]),
+        .Branch_o(branch),
+        .MemToReg_o(MemToReg),
+        .BranchType_o(BranchType),
+        .Jump_o(Jump),
+        .MemRead_o(MemRead),
+        .MemWrite_o(MemWrite),
+	    .RegWrite_o(reg_write), 
+	    .ALU_op_o(alu_op),   
+	    .ALUSrc_o(alu_src),   
+	    .RegDst_o(reg_dst)
+	    );
+
+ALU_Ctrl AC(
+        .funct_i(im_out[5:0]),   
+        .ALUOp_i(alu_op),   
+        .ALUCtrl_o(alu_ctrl_out) 
+        );
+	
+Sign_Extend SE(
+        .data_i(im_out[15:0]),
+        .data_o(sign_ext_out)
+        );
+
+MUX_2to1 #(.size(32)) Mux_ALUSrc(
+        .data0_i(RTdata_out),
+        .data1_i(sign_ext_out),
+        .select_i(alu_src),
+        .data_o(mux_alusrc_out)
+        );	
+		
+ALU  ALU(
+         .src1_i(RSdata_out),
+         .src2_i(mux_alusrc_out),
+         .ctrl_i(alu_ctrl_out),
+         .result_o(alu_result),
+         .zero_o(alu_zero),
+         .shamt(im_out[10:6])
+         );
+		
+Adder Adder2(
+        .src1_i(adder1_sum),     
+	    .src2_i(shift_left_out),     
+	    .sum_o(adder2_sum)      
+	    );
+		
+Shift_Left_Two #(.size(32))  Shifter(
+        .data_i(sign_ext_out),
+        .data_o(shift_left_out)
+        ); 		
+		
+MUX_2to1 #(.size(32)) Mux_PC_Source_1(
+        .data0_i(adder1_sum),
+        .data1_i(adder2_sum),
+        .select_i(branch&alu_zero),
+        .data_o(mux_pc_source_o1)
+        );	
+        
+MUX_3to1 #(.size(32)) Mux_PC_Source(
+                //.data0_i(adder1_sum),
+                .data0_i(jump_addr_o),
+                .data1_i(mux_pc_source_o1),
+                .data2_i(RSdata_out),
+                .select_i(Jump),
+                .data_o(mux_pc_source)
+                );    
+
+		
+//MUX_2to1 #(.size(32)) Mux_Branch(
+  //      .data0_i(alu_zero),
+    //    .data1_i(alu_result),
+      //  .select_i(BranchType),
+        //.data_o(mux_branch_o)
+       // );	
+                
+DM DM(
+        .clk_i(clk_i), 
+        //.addr_i(im_out[25:21] + sign_ext_out),
+        .addr_i(alu_result),
+        .data_i(RTdata_out),
+        .MemRead_i(MemRead),
+        .MemWrite_i(MemWrite),
+        .data_o(Data_Memory_out)
+        );
+        //Change here
+ MUX_3to1 #(.size(32)) Mux_DM(
+                .data0_i(alu_result),
+                .data1_i(Data_Memory_out),
+                .data2_i(sign_ext_out),
+                .select_i(MemToReg),
+                .data_o(mux_3to1_o)
+                );   
+        
+endmodule
+		  
+
+
